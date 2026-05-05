@@ -1,0 +1,6 @@
+/gradlew text eol=lf
+*.bat text eol=crlf
+*.jar binary
+
+# 쉘 스크립트 파일은 OS 상관없이 무조건 LF로 유지하도록 (도커 호환성)
+*.sh text eol=lf
