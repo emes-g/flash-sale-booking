@@ -72,4 +72,19 @@ public class BookingService {
         Booking savedBooking = bookingRepository.save(booking);
         return savedBooking.getId();
     }
+
+    // 보상 트랜잭션 (Saga Pattern)
+    @Transactional
+    public void rollbackBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BusinessException("예약을 찾을 수 없습니다."));
+
+        // 1. 예약 상태를 FAILED로 변경
+        booking.fail();
+
+        // 2. 깎았던 재고를 다시 복구 (+1)
+        AccommodationStock stock = stockRepository.findByAccommodationId(booking.getAccommodation().getId())
+                .orElseThrow(() -> new BusinessException("재고 정보를 찾을 수 없습니다."));
+        stock.increase();
+    }
 }
