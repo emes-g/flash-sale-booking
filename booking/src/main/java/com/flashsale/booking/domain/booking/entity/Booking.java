@@ -38,4 +38,8 @@ public class Booking extends BaseTimeEntity {
         this.status = status;
         this.totalAmount = totalAmount;
     }
+
+    public void complete() {
+        this.status = "COMPLETED";
+    }
 }
