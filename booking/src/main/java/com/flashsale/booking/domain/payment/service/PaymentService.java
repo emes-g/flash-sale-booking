@@ -57,6 +57,16 @@ public class PaymentService {
             throw new BusinessException("결제 요청 금액이 총 예약 금액과 일치하지 않습니다.");
         }
 
+        // 1-3. 지원하는 결제 수단인지 사전 검증 (Fail-Fast)
+        // 실제 결제 처리가 진행되기 전에 미리 예외를 발생시켜 일부 상태만 변경되는 것을 방지한다.
+        for (PaymentRequest.PaymentDetail detail : request.getPayMethods()) {
+            boolean isSupported = paymentProcessors.stream()
+                    .anyMatch(p -> p.supports(detail.getPaymentMethod()));
+            if (!isSupported) {
+                throw new BusinessException("지원하지 않는 결제 수단입니다: " + detail.getPaymentMethod());
+            }
+        }
+
         // 2. 결제 처리 로직 실행 (외부 API 통신 포함)
         // 트랜잭션 외부에서 실행되므로, 이 과정이 지연되어도 DB 커넥션을 점유하지 않는다.
         List<Payment> processedPayments = new ArrayList<>();
@@ -64,7 +74,7 @@ public class PaymentService {
             PaymentProcessor processor = paymentProcessors.stream()
                     .filter(p -> p.supports(detail.getPaymentMethod()))
                     .findFirst()
-                    .orElseThrow(() -> new BusinessException("지원하지 않는 결제 수단입니다: " + detail.getPaymentMethod()));
+                    .orElseThrow(() -> new IllegalStateException("사전 검증 로직 누락 발생"));
 
             Payment payment = processor.process(booking, user, detail.getProvider(), detail.getAmount());
             processedPayments.add(payment);
