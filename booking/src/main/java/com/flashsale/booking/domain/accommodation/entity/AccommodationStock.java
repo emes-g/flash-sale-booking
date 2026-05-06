@@ -1,5 +1,6 @@
 package com.flashsale.booking.domain.accommodation.entity;
 
+import com.flashsale.booking.global.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,4 +29,11 @@ public class AccommodationStock {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public void decrease() {
+        if (this.stock <= 0) {
+            throw new BusinessException("재고가 모두 소진되었습니다.");
+        }
+        this.stock--;
+    }
 }

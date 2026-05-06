@@ -5,6 +5,7 @@ import com.flashsale.booking.domain.user.entity.User;
 import com.flashsale.booking.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,4 +30,12 @@ public class Booking extends BaseTimeEntity {
     private String status;
 
     private int totalAmount;
+
+    @Builder
+    public Booking(User user, Accommodation accommodation, String status, int totalAmount) {
+        this.user = user;
+        this.accommodation = accommodation;
+        this.status = status;
+        this.totalAmount = totalAmount;
+    }
 }
