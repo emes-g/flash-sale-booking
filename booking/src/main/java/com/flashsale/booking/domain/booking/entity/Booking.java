@@ -1,10 +1,11 @@
-package com.flashsale.booking.domain.booking;
+package com.flashsale.booking.domain.booking.entity;
 
-import com.flashsale.booking.domain.accommodation.Accommodation;
-import com.flashsale.booking.domain.user.User;
+import com.flashsale.booking.domain.accommodation.entity.Accommodation;
+import com.flashsale.booking.domain.user.entity.User;
 import com.flashsale.booking.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,4 +30,16 @@ public class Booking extends BaseTimeEntity {
     private String status;
 
     private int totalAmount;
+
+    @Builder
+    public Booking(User user, Accommodation accommodation, String status, int totalAmount) {
+        this.user = user;
+        this.accommodation = accommodation;
+        this.status = status;
+        this.totalAmount = totalAmount;
+    }
+
+    public void complete() {
+        this.status = "COMPLETED";
+    }
 }

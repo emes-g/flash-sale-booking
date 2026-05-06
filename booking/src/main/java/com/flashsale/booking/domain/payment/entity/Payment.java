@@ -1,9 +1,10 @@
-package com.flashsale.booking.domain.payment;
+package com.flashsale.booking.domain.payment.entity;
 
-import com.flashsale.booking.domain.booking.Booking;
+import com.flashsale.booking.domain.booking.entity.Booking;
 import com.flashsale.booking.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -45,4 +46,15 @@ public class Payment extends BaseTimeEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "json")
     private Map<String, Object> paymentDetails;
+
+    @Builder
+    public Payment(Booking booking, String paymentType, String paymentMethod, String provider, String providerTransactionId, int amount, String status) {
+        this.booking = booking;
+        this.paymentType = paymentType;
+        this.paymentMethod = paymentMethod;
+        this.provider = provider;
+        this.providerTransactionId = providerTransactionId;
+        this.amount = amount;
+        this.status = status;
+    }
 }
