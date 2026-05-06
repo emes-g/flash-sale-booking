@@ -1,7 +1,7 @@
-package com.flashsale.booking.domain.booking;
+package com.flashsale.booking.domain.booking.entity;
 
-import com.flashsale.booking.domain.accommodation.Accommodation;
-import com.flashsale.booking.domain.user.User;
+import com.flashsale.booking.domain.accommodation.entity.Accommodation;
+import com.flashsale.booking.domain.user.entity.User;
 import com.flashsale.booking.global.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

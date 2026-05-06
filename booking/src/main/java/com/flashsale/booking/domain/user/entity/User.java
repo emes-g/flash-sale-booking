@@ -1,4 +1,4 @@
-package com.flashsale.booking.domain.user;
+package com.flashsale.booking.domain.user.entity;
 
 import com.flashsale.booking.global.common.entity.BaseCreatedAtEntity;
 import jakarta.persistence.*;

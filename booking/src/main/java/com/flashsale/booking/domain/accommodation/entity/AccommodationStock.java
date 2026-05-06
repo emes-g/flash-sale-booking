@@ -1,4 +1,4 @@
-package com.flashsale.booking.domain.accommodation;
+package com.flashsale.booking.domain.accommodation.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

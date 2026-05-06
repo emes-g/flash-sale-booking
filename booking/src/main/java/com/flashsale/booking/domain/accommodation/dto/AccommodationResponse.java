@@ -1,6 +1,6 @@
 package com.flashsale.booking.domain.accommodation.dto;
 
-import com.flashsale.booking.domain.accommodation.Accommodation;
+import com.flashsale.booking.domain.accommodation.entity.Accommodation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

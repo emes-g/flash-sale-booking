@@ -1,7 +1,7 @@
 package com.flashsale.booking.domain.accommodation.service;
 
-import com.flashsale.booking.domain.accommodation.Accommodation;
-import com.flashsale.booking.domain.accommodation.AccommodationRepository;
+import com.flashsale.booking.domain.accommodation.entity.Accommodation;
+import com.flashsale.booking.domain.accommodation.repository.AccommodationRepository;
 import com.flashsale.booking.domain.accommodation.dto.AccommodationResponse;
 import com.flashsale.booking.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
