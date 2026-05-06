@@ -17,6 +17,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    defer-datasource-initialization: true # Hibernate가 테이블을 다 만든 후 data.sql을 실행하도록 지연
+
+  # SQL 설정 (더미 데이터 삽입)
+  sql:
+    init:
+      mode: always
 
   # Redis 설정
   data:
