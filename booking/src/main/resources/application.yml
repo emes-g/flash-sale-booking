@@ -12,11 +12,17 @@ spring:
   # JPA 설정
   jpa:
     hibernate:
-      ddl-auto: update # 로컬/개발 환경용 자동 테이블 갱신
+      ddl-auto: update # 로컬/개발 환경용 자동 테이블 갱신 (테이블이 없는 경우, 자동 생성)
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+    defer-datasource-initialization: true # Hibernate가 테이블을 다 만든 후 data.sql을 실행하도록 지연
+
+  # SQL 설정 (더미 데이터 삽입)
+  sql:
+    init:
+      mode: always
 
   # Redis 설정
   data:
