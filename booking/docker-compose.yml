@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  # 애플리케이션 서버 (Spring Boot)
+  app:
+    build: . # 현재 디렉토리의 Dockerfile을 기반으로 이미지를 빌드
+    container_name: flash-app
+    ports:
+      - "8080:8080"
+    environment:
+      # 컨테이너 간 통신에 필요한 환경 변수 값 등록
+      - DB_HOST=mysql-db
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_NAME=${DB_NAME:-flash_sale_booking}
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-root}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT:-6379}
+    depends_on: # DB와 Redis 컨테이너가 먼저 실행된 후 App이 실행되도록 보장
+      - mysql-db
+      - redis
+    restart: on-failure # 의존성 문제 시 재시도
+
   # MySQL Database
   mysql-db:
     image: mysql:8.0
@@ -8,8 +28,8 @@ services:
     ports:
       - "${DB_PORT}:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+      MYSQL_DATABASE: ${DB_NAME:-flash_sale_booking}
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     restart: always
 
@@ -18,5 +38,5 @@ services:
     image: redis:alpine
     container_name: flash-redis
     ports:
-      - "${REDIS_PORT}:6379"
+      - "${REDIS_PORT:-6379}:6379"
     restart: always
