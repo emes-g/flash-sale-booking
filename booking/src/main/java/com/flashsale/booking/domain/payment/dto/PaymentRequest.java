@@ -16,7 +16,7 @@ public class PaymentRequest {
     @NoArgsConstructor
     public static class PaymentDetail {
         private String paymentMethod; // Y_POINT, CREDIT_CARD 등
-        private String provider; // SYSTEM, TOSS 등
+        private String provider; // SYSTEM, Y 등
         private int amount;
     }
 
