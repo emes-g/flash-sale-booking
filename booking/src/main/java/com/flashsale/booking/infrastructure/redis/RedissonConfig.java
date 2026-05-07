@@ -1,4 +1,4 @@
-package com.flashsale.booking.global.config;
+package com.flashsale.booking.infrastructure.redis;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
