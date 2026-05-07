@@ -86,6 +86,9 @@ public class BookingFacade {
     public Long checkoutAndPayFallback(BookingPaymentRequest request) {
         log.warn("Redis 장애 감지. DB 비관적 락(Fallback)으로 결제를 진행합니다. 숙소 ID: {}", request.getAccommodationId());
 
+        // 1. DB 기반 멱등성 검증 (단기간 내 연속된 중복 결제 요청 방지)
+        bookingService.validateDuplicateRequest(request.getUserId(), request.getAccommodationId());
+
         Long bookingId = null;
         try {
             BookingRequest bookingRequest = BookingRequest.builder()
@@ -93,10 +96,10 @@ public class BookingFacade {
                     .accommodationId(request.getAccommodationId())
                     .build();
 
-            // 1. 예약 트랜잭션: 비관적 락 기반으로 재고 차감 및 PENDING 예약 생성
+            // 2. 예약 트랜잭션: 비관적 락 기반으로 재고 차감 및 PENDING 예약 생성
             bookingId = bookingService.createBookingWithPessimisticLock(bookingRequest);
 
-            // 2. 결제 트랜잭션: 앞서 수정한 안전한 구조의 processPayment 호출
+            // 3. 결제 트랜잭션: 앞서 수정한 안전한 구조의 processPayment 호출
             PaymentRequest paymentRequest = PaymentRequest.builder()
                     .bookingId(bookingId)
                     .userId(request.getUserId())

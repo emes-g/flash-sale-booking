@@ -107,6 +107,18 @@ public class BookingService {
         return savedBooking.getId();
     }
 
+    // Fallback(DB) 기반 멱등성 검증
+    @Transactional(readOnly = true)
+    public void validateDuplicateRequest(Long userId, Long accommodationId) {
+        // 현재 시간으로부터 5초 전 시간 계산
+        LocalDateTime fiveSecondsAgo = LocalDateTime.now().minusSeconds(5);
+
+        // 5초 이내에 동일한 유저가 동일한 숙소에 생성한 예약이 있다면 중복 요청으로 간주
+        if (bookingRepository.existsByUserIdAndAccommodationIdAndCreatedAtAfter(userId, accommodationId, fiveSecondsAgo)) {
+            throw new BusinessException("이미 처리 중이거나 최근에 완료된 결제 요청입니다.");
+        }
+    }
+
     // 보상 트랜잭션 (Saga Pattern)
     @Transactional
     public void rollbackBooking(Long bookingId) {
