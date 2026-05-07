@@ -73,6 +73,40 @@ public class BookingService {
         return savedBooking.getId();
     }
 
+    // Redis 장애 시 사용할 DB 비관적 락 기반의 예약 생성 로직
+    @Transactional
+    public Long createBookingWithPessimisticLock(BookingRequest request) {
+        // 1. 사용자 및 숙소 조회 (일반 조회, 락 없음)
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new BusinessException("존재하지 않는 사용자입니다."));
+        Accommodation accommodation = accommodationRepository.findById(request.getAccommodationId())
+                .orElseThrow(() -> new BusinessException("존재하지 않는 숙소입니다."));
+
+        // 2. 예약 오픈 시간 검증
+        if (LocalDateTime.now().isBefore(accommodation.getOpenAt())) {
+            throw new BusinessException("아직 예약이 오픈되지 않았습니다.");
+        }
+
+        // 3. 재고 조회 (비관적 락 적용) 및 차감
+        // 다른 스레드가 락을 점유 중이라면 여기서 대기 상태(Blocking)가 됨
+        AccommodationStock stock = stockRepository
+                .findByAccommodationIdWithPessimisticLock(accommodation.getId())
+                .orElseThrow(() -> new BusinessException("재고 정보가 존재하지 않습니다."));
+
+        stock.decrease();
+
+        // 4. 예약 생성 (상태: 결제 대기)
+        Booking booking = Booking.builder()
+                .user(user)
+                .accommodation(accommodation)
+                .status("PENDING")
+                .totalAmount(accommodation.getPrice())
+                .build();
+
+        Booking savedBooking = bookingRepository.save(booking);
+        return savedBooking.getId();
+    }
+
     // 보상 트랜잭션 (Saga Pattern)
     @Transactional
     public void rollbackBooking(Long bookingId) {

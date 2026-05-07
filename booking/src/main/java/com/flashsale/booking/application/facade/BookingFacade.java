@@ -78,4 +78,41 @@ public class BookingFacade {
             bucket.delete();
         }
     }
+
+    /**
+     * Redis 장애 발생 시 호출되는 Fallback 메서드.
+     * @DistributedLock 적용 없이 내부적으로 DB 비관적 락이 적용된 메서드를 호출한다.
+     */
+    public Long checkoutAndPayFallback(BookingPaymentRequest request) {
+        log.warn("Redis 장애 감지. DB 비관적 락(Fallback)으로 결제를 진행합니다. 숙소 ID: {}", request.getAccommodationId());
+
+        Long bookingId = null;
+        try {
+            BookingRequest bookingRequest = BookingRequest.builder()
+                    .userId(request.getUserId())
+                    .accommodationId(request.getAccommodationId())
+                    .build();
+
+            // 1. 예약 트랜잭션: 비관적 락 기반으로 재고 차감 및 PENDING 예약 생성
+            bookingId = bookingService.createBookingWithPessimisticLock(bookingRequest);
+
+            // 2. 결제 트랜잭션: 앞서 수정한 안전한 구조의 processPayment 호출
+            PaymentRequest paymentRequest = PaymentRequest.builder()
+                    .bookingId(bookingId)
+                    .userId(request.getUserId())
+                    .payMethods(request.getPayMethods())
+                    .build();
+
+            paymentService.processPayment(paymentRequest);
+
+            return bookingId;
+
+        } catch (Exception e) {
+            log.error("Fallback 결제 처리 중 오류 발생. 예약을 롤백합니다. 숙소 ID: {}", request.getAccommodationId(), e);
+            if (bookingId != null) {
+                bookingService.rollbackBooking(bookingId);
+            }
+            throw e;
+        }
+    }
 }
