@@ -122,7 +122,7 @@ public class BookingFacadeConcurrencyTest {
     }
 
     @Test
-    @DisplayName("멱등성 방지 테스트: 1명의 유저가 동시에 10번의 결제 요청을 보내면 1번만 성공하고 9번은 실패해야 한다.")
+    @DisplayName("멱등성 처리 여부 테스트: 1명의 유저가 동시에 10번의 결제 요청을 보내면 1번만 성공하고 9번은 실패해야 한다.")
     void testIdempotencyAgainstDoubleSubmit() throws InterruptedException {
         int threadCount = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(10);

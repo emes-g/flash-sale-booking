@@ -31,7 +31,7 @@ public class Payment extends BaseTimeEntity {
     // 결제 수단: CREDIT_CARD, Y_PAY, Y_POINT 등
     private String paymentMethod;
 
-    // 결제 처리 주체: SYSTEM(내부), TOSS, KAKAO 등
+    // 결제 처리 주체: SYSTEM(내부), Y 등
     private String provider;
 
     // PG사 고유 승인 번호 또는 내부 포인트 차감 트랜잭션 ID

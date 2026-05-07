@@ -2,12 +2,10 @@ package com.flashsale.booking.domain.booking.controller;
 
 import com.flashsale.booking.application.facade.BookingFacade;
 import com.flashsale.booking.domain.booking.dto.BookingPaymentRequest;
-import com.flashsale.booking.domain.booking.dto.BookingRequest;
 import com.flashsale.booking.domain.booking.dto.CheckoutResponse;
 import com.flashsale.booking.domain.booking.service.BookingService;
 import com.flashsale.booking.global.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.redisson.client.RedisException;
 import org.springframework.web.bind.annotation.*;
 
