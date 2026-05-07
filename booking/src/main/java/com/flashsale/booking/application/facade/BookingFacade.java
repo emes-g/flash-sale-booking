@@ -72,10 +72,6 @@ public class BookingFacade {
                 bookingService.rollbackBooking(bookingId);
             }
             throw e; // 예외를 다시 던져서 사용자에게 실패를 알림
-
-        } finally {
-            // 처리가 끝났어도, 5초 전에 다른 요청을 받을 수 있도록 멱등성 키 즉시 삭제
-            bucket.delete();
         }
     }
 
