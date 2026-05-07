@@ -36,4 +36,9 @@ public class AccommodationStock {
         }
         this.stock--;
     }
+
+    // 결제 실패 시 재고 복구 (Rollback)
+    public void increase() {
+        this.stock++;
+    }
 }

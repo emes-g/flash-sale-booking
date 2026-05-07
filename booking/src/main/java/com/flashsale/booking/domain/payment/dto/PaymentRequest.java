@@ -1,5 +1,6 @@
 package com.flashsale.booking.domain.payment.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.util.List;
@@ -17,5 +18,12 @@ public class PaymentRequest {
         private String paymentMethod; // Y_POINT, CREDIT_CARD 등
         private String provider; // SYSTEM, TOSS 등
         private int amount;
+    }
+
+    @Builder
+    public PaymentRequest(Long bookingId, Long userId, List<PaymentDetail> payMethods) {
+        this.bookingId = bookingId;
+        this.userId = userId;
+        this.payMethods = payMethods;
     }
 }

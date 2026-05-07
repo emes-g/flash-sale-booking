@@ -42,4 +42,9 @@ public class Booking extends BaseTimeEntity {
     public void complete() {
         this.status = "COMPLETED";
     }
+
+    // 결제 실패 시 예약 취소 처리
+    public void fail() {
+        this.status = "FAILED";
+    }
 }
