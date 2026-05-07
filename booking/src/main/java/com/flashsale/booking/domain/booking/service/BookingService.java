@@ -1,5 +1,7 @@
 package com.flashsale.booking.domain.booking.service;
 
+import com.flashsale.booking.application.service.AccommodationCacheService;
+import com.flashsale.booking.domain.accommodation.dto.AccommodationCacheDto;
 import com.flashsale.booking.domain.accommodation.entity.Accommodation;
 import com.flashsale.booking.domain.accommodation.entity.AccommodationStock;
 import com.flashsale.booking.domain.accommodation.repository.AccommodationRepository;
@@ -25,11 +27,15 @@ public class BookingService {
     private final AccommodationRepository accommodationRepository;
     private final AccommodationStockRepository stockRepository;
     private final BookingRepository bookingRepository;
+    private final AccommodationCacheService accommodationCacheService;
 
     @Transactional(readOnly = true)
     public CheckoutResponse getCheckoutInfo(Long accommodationId, Long userId) {
-        Accommodation accommodation = accommodationRepository.findById(accommodationId)
-                .orElseThrow(() -> new BusinessException("존재하지 않는 숙소입니다."));
+
+        // 숙소 정보는 Redis Cache에서 조회
+        AccommodationCacheDto accommodation = accommodationCacheService.getAccommodationInfo(accommodationId);
+
+        // 유저 정보는 DB에서 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException("존재하지 않는 사용자입니다."));
 
